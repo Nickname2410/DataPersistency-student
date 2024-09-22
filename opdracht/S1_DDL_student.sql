@@ -35,6 +35,9 @@
 -- geaccepteerd. Test deze regel en neem de gegooide foutmelding op als
 -- commentaar in de uitwerking.
 
+alter table medewerkers add geslacht char(1)
+constraint m_geslacht_chk check (geslacht in ('m', 'v'))
+
 
 -- S1.2. Nieuwe afdeling
 --
@@ -44,6 +47,8 @@
 -- en valt direct onder de directeur.
 -- Voeg de nieuwe afdeling en de nieuwe medewerker toe aan de database.
 
+insert into medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, afd)
+values (8000, 'DONK', 'A', 'DIRECTEUR', 7839, '24-10-2006', 6000, 40);
 
 -- S1.3. Verbetering op afdelingentabel
 --
@@ -55,6 +60,27 @@
 --   c) Op enig moment gaat het mis. De betreffende kolommen zijn te klein voor
 --      nummers van 3 cijfers. Los dit probleem op.
 
+create sequence afdelingsnummers_seq
+increment 10
+start 60
+minvalue 0
+maxvalue 100000
+cache 1;
+
+insert into afdelingen(anr, naam, locatie, hoofd)
+values(
+nextval('afdelingsnummers_seq'),
+'KEVIN',
+'BLARICUM',
+7974);
+
+insert into afdelingen(anr, naam, locatie, hoofd)
+values(
+	nextval('afdelingsnummers_seq'),
+'TEST',
+'LAREN',
+7974
+)
 
 -- S1.4. Adressen
 --
@@ -69,6 +95,16 @@
 --    telefoon      10 cijfers, uniek
 --    med_mnr       FK, verplicht
 
+create table adressen(
+postcode char(6) check (postcode ~ '/d{4}[A-Z]{2}'),
+huisnummer integer,
+ingangsdatum date,
+einddatum date check (einddatum > ingangsdatum),
+telefoon char(10) check (telefoon ~'/d{10}') unique,
+med_mnr numeric(4) not null,
+constraint med_nmr foreign key (med_mnr) references medewerkers(mnr),
+primary key (postcode, huisnummer, ingangsdatum)
+)
 
 -- S1.5. Commissie
 --
@@ -82,7 +118,9 @@ VALUES (8001, 'MULLER', 'TJ', 'TRAINER', 7566, '1982-08-18', 2000, 500);
 INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, comm)
 VALUES (8002, 'JANSEN', 'M', 'VERKOPER', 7698, '1981-07-17', 1000, NULL);
 
-
+alter table medewerkers
+add constraint comm_functie_verkoper check ((functie = 'VERKOPER' and comm is not null) or
+(functie!='VERKOPER' and comm is null))
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
 -- Met onderstaande query kun je je code testen. Zie bovenaan dit bestand
