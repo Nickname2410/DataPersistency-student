@@ -30,36 +30,56 @@
 -- Produceer een overzicht van alle cursusuitvoeringen; geef de
 -- code, de begindatum, de lengte en de naam van de docent.
 -- DROP VIEW IF EXISTS s3_1; CREATE OR REPLACE VIEW s3_1 AS                                                     -- [TEST]
-
+select c.code, u.begindatum, c.lengte, m.naam as docent
+from uitvoeringen u
+join cursussen c on c.code = u.cursus
+join medewerkers m on u.docent = m.mnr;
 
 -- S3.2.
 -- Geef in twee kolommen naast elkaar de achternaam van elke cursist (`cursist`)
 -- van alle S02-cursussen, met de achternaam van zijn cursusdocent (`docent`).
 -- DROP VIEW IF EXISTS s3_2; CREATE OR REPLACE VIEW s3_2 AS                                                     -- [TEST]
-
+select cursist.naam as cursist, docent.naam as docent
+from inschrijvingen i
+join uitvoeringen u on i.cursus = u.cursus and i.begindatum = u.begindatum
+join medewerkers cursist on i.cursist = cursist.mnr
+join medewerkers docent on u.docent = docent.mnr
+where i.cursus = 'S02';
 
 -- S3.3.
 -- Geef elke afdeling (`afdeling`) met de naam van het hoofd van die
 -- afdeling (`hoofd`).
 -- DROP VIEW IF EXISTS s3_3; CREATE OR REPLACE VIEW s3_3 AS                                                     -- [TEST]
 
+select afd.naam as afdeling, medwr.naam as hoofd
+from afdelingen afd
+join medewerkers medwr
+on medwr.mnr = afd.hoofd;
 
 -- S3.4.
 -- Geef de namen van alle medewerkers, de naam van hun afdeling (`afdeling`)
 -- en de bijbehorende locatie.
 -- DROP VIEW IF EXISTS s3_4; CREATE OR REPLACE VIEW s3_4 AS                                                     -- [TEST]
-
+select m.naam as naam, a.naam as afdeling, a.locatie as locatie
+from medewerkers m
+right join afdelingen a
+on a.hoofd = m.mnr;
 
 -- S3.5.
 -- Geef de namen van alle cursisten die staan ingeschreven voor de cursus S02 van 12 april 2019
 -- DROP VIEW IF EXISTS s3_5; CREATE OR REPLACE VIEW s3_5 AS                                                     -- [TEST]
-
+select m.naam
+from medewerkers m
+join inschrijvingen i
+on i.cursist = m.mnr
+where i.begindatum = '2019-04-12';
 
 -- S3.6.
 -- Geef de namen van alle medewerkers en hun toelage.
 -- DROP VIEW IF EXISTS s3_6; CREATE OR REPLACE VIEW s3_6 AS                                                     -- [TEST]
-
-
+SELECT medewerkers.naam, schalen.toelage
+FROM schalen
+CROSS JOIN medewerkers;
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
 -- Met onderstaande query kun je je code testen. Zie bovenaan dit bestand
