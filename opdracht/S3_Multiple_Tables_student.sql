@@ -77,9 +77,9 @@ where i.begindatum = '2019-04-12';
 -- S3.6.
 -- Geef de namen van alle medewerkers en hun toelage.
 -- DROP VIEW IF EXISTS s3_6; CREATE OR REPLACE VIEW s3_6 AS                                                     -- [TEST]
-SELECT medewerkers.naam, schalen.toelage
-FROM schalen
-CROSS JOIN medewerkers;
+select medewerkers.naam, schalen.toelage
+from schalen
+cross join medewerkers;
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
 -- Met onderstaande query kun je je code testen. Zie bovenaan dit bestand
