@@ -72,7 +72,7 @@ select m.naam
 from medewerkers m
 join inschrijvingen i
 on i.cursist = m.mnr
-where i.begindatum = '2019-04-12';
+where i.begindatum = '2019-04-12' and i.cursus = 'S02';
 
 -- S3.6.
 -- Geef de namen van alle medewerkers en hun toelage.
@@ -80,6 +80,12 @@ where i.begindatum = '2019-04-12';
 select medewerkers.naam, schalen.toelage
 from schalen
 cross join medewerkers;
+
+select medewerkers.naam, schalen.toelage
+from schalen
+cross join medewerkers
+where medewerkers.maandsal >= ondergrens
+and medewerkers.maandsal <= bovengrens;
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
 -- Met onderstaande query kun je je code testen. Zie bovenaan dit bestand

@@ -38,7 +38,6 @@
 alter table medewerkers add geslacht char(1)
 constraint m_geslacht_chk check (geslacht in ('m', 'v'))
 
-
 -- S1.2. Nieuwe afdeling
 --
 -- Het bedrijf krijgt een nieuwe onderzoeksafdeling 'ONDERZOEK' in Zwolle.
@@ -49,6 +48,9 @@ constraint m_geslacht_chk check (geslacht in ('m', 'v'))
 
 insert into medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, afd)
 values (8000, 'DONK', 'A', 'DIRECTEUR', 7839, '24-10-2006', 6000, 40);
+
+insert into afdelingen(anr, naam, locatie, hoofd)
+values (50, 'ONDERZOEK', 'ZWOLLE', 8000);
 
 -- S1.3. Verbetering op afdelingentabel
 --
@@ -82,6 +84,8 @@ values(
 7974
 )
 
+alter table afdelingen alter column anr type numeric(3);
+
 -- S1.4. Adressen
 --
 -- Maak een tabel `adressen`, waarin de adressen van de medewerkers worden
@@ -96,15 +100,17 @@ values(
 --    med_mnr       FK, verplicht
 
 create table adressen(
-postcode char(6) check (postcode ~ '/d{4}[A-Z]{2}'),
-huisnummer integer,
-ingangsdatum date,
-einddatum date check (einddatum > ingangsdatum),
-telefoon char(10) check (telefoon ~'/d{10}') unique,
-med_mnr numeric(4) not null,
-constraint med_nmr foreign key (med_mnr) references medewerkers(mnr),
-primary key (postcode, huisnummer, ingangsdatum)
+	postcode CHAR(6)constraint a_postcode_chk check (regexp_like(postcode, '[0-9]{4}[A-Z]{2}')) not null,
+	huisnummer int constraint a_huisnummer not null,
+	ingangsdatum date constraint a_ingangsdatum not null,
+	einddatum date constraint a_beg_eind_chk check (ingangsdatum < einddatum) not null,
+	telefoonnummer char(10) constraint a_telefoon_num unique,
+	med_nmr numeric (4) constraint a_med_nmr references medewerkers not null,
+	constraint adressen_pk primary key(postcode, huisnummer, ingangsdatum)
 )
+
+insert into adressen(postcode, huisnummer, ingangsdatum, einddatum, telefoonnummer, med_nmr)
+values('3755EB', 24, '2006-10-24', '2024-10-24', '0612345678', 8000)
 
 -- S1.5. Commissie
 --

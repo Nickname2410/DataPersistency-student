@@ -59,15 +59,15 @@ where locatie = 'UTRECHT' or locatie = 'MAASTRICHT';
 -- DROP VIEW IF EXISTS s2_4; CREATE OR REPLACE VIEW s2_4 AS                                                     -- [TEST]
 select naam, voorl
 from medewerkers
-where naam != 'Jansen' and voorl != 'R';
+where not (naam = 'JANSEN' and voorl = 'R')
 
 -- S2.5. Nieuwe SQL-cursus
 --
 -- Er wordt een nieuwe uitvoering gepland voor cursus S02, en wel op de
 -- komende 2 maart. De cursus wordt gegeven in Leerdam door Nick Smit.
 -- Voeg deze gegevens toe.
-insert into uitvoeringen (cursus, begindatum, docent)
-values ('S02', '2024-02-02', 7369)
+insert into uitvoeringen (cursus, begindatum, docent, locatie)
+values ('S02', '2024-02-02', 7369, 'LEERDAM')
 ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 -- S2.6. Stagiairs
@@ -127,10 +127,13 @@ where functie = 'MANAGER';
 -- Martens heeft als verkoper succes en wordt door de concurrent
 -- weggekocht. Verwijder zijn gegevens.
 delete from medewerkers
-where mnr = 7654;
+where naam = 'MARTENS';
+
 -- Zijn collega Alders heeft ook plannen om te vertrekken. Verwijder ook zijn gegevens.
 -- Waarom lukt dit (niet)?
---Nee, hij staat nog ingeschreven bij cursus
+delete from medewerkers
+where naam = 'ALDERS';
+--Nee, hij wordt nog ergens gereferenced
 
 -- S2.11. Nieuwe afdeling
 --
